@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/15482435.svg)](https://zenodo.org/badge/latestdoi/15482435)
+
 # A Remotely-Sensed Biodiversity Proxy Captures the Global Multifunctionality of Ecosystem Functioning
 Codes related to manuscript by Gomarasca et al., (submitted) related to analysis on eddy-covariance ecosystem functional properties, remotely-sensed biodiversity, and multifunctionality.
 
