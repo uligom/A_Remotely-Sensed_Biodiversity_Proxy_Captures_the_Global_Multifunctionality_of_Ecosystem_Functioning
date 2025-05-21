@@ -1,0 +1,114 @@
+---
+title: "A Remotely-Sensed Biodiversity Proxy Captures the Global Multifunctionality of Ecosystem Functioning"
+output: html_notebook
+---
+
+Codes to run the analyses for the manuscript Gomarasca et al., in review, titled: "A Remotely-Sensed Biodiversity Proxy Captures the Global Multifunctionality of Ecosystem Functioning"
+
+
+### Pre-processing -------------------------------------------------------------
+```{r, echo = F}
+## Site coordinates and IGBP classes ----
+source("scripts/extract_site_igbp_coords.R")
+```
+
+
+### Calculate predicted metrics & extract climate predictors -------------------
+```{r, echo = F}
+## Ecosystem Functional Properties (EFPs) ----
+# NB: also extracts mean climatic variables
+source("scripts/calculate_EFPs_CLIM_parallelized_v03.R")
+
+
+## Ecosystem Function Multifunctionality (EMF) ----
+# Figure S6
+source("scripts/calculate_multifunctionality.R")
+
+
+## Site list ----
+source("scripts/export_site_list.R")
+```
+
+
+### Extract other predictors ---------------------------------------------------
+```{r, echo = F}
+## MODIS-LAImax ----
+# From Google Earth Engine at:
+# https://code.earthengine.google.com/ba3e8e2ffff69b71b6c7f822e5c5a57e
+
+
+## Vegetation structure (Hc, LAImax) ----
+# + calculate correlation coefficient between measured LAImax and MODIS-LAImax
+source("scripts/extract_veg_structure.R")
+
+
+## Rao Q and vegetation indices ----
+## Extract Sentinel 2 cut-outs in Google Earth Engine at:
+# https://code.earthengine.google.com/4fcd28ada9ef8082c6d797555ea3c13c
+
+## Calculate Rao Q
+# execute in Python reader:
+# scripts/RD1_1_5_S2timeseires_GEE_4Ulisse_new.py
+
+## Extract aggregated Rao Q and vegetation indices
+# + calculate correlation coefficient between RaoQ_NIRv and NIRv_median
+source("scripts/extract_raoq_and_VImax.R")
+```
+
+
+### Dataset for analyses -------------------------------------------------------
+```{r, echo = F}
+## Merge data ----
+source("scripts/data_merge.R")
+```
+
+
+### Analyses -------------------------------------------------------------------
+```{r, echo = F}
+## Functions ----
+source("scripts/functions/run_multimodel_inference.R")
+source("scripts/functions/plot_mumin_effects.R")
+## Inputs:
+# test = "main":  analyses for main figures
+# test = "soil":  analyses with soil variables from modelled data
+# test = "nirv":  analyses including median-NIRv together with RaoQ from NIRv
+# test = "lai":   analyses with measured-LAImax instead of MODIS-LAImax
+
+
+## Multimodel Inference + Relative Importance (manuscript) -----
+# Figure 2, Figure 3, Supplementary Table S1
+run_multimodel_inference(test = "main")
+plot_mumin_effects(test = "main")
+
+
+## Plot map of sites ----
+# Figure 4
+source("scripts/extract_sites_plot_map.R")
+
+
+## Multimodel Inference + Relative Importance (supplementary materials) -----
+# Supplementary Figure S1
+run_multimodel_inference(test = "soil")
+plot_mumin_effects(test = "soil")
+
+# Supplementary Figure S2
+run_multimodel_inference(test = "nirv")
+plot_mumin_effects(test = "nirv")
+
+# Supplementary Figure S4, Supplementary Figure S5
+run_multimodel_inference(test = "lai")
+plot_mumin_effects(test = "lai")
+
+
+## Bivariate relationships (RaoQs vs GPPsat) ----
+# Supplementary Figure S3
+source("scripts/plot_raoq_vs_gppsat.R")
+```
+
+
+### Metadata -------------------------------------------------------------------
+```{r, echo = F}
+## Site information ----
+# Supplementary Table S2
+source("scripts/extract_site_metadata.R")
+```
